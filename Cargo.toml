@@ -1,0 +1,12 @@
+[package]
+name = "freetrade"
+version = "0.1.0"
+authors = ["Tom Streller <tom.streller@tutti.ch>"]
+edition = "2018"
+
+[dependencies]
+rand = "0.7"
+log = "0.4"
+env_logger = "0.7"
+ggez = "0.5"
+legion = "0.3"
