@@ -4,6 +4,9 @@ pub type Position = Point2<f32>;
 pub type Velocity = Point2<f32>;
 pub type Colour = Color;
 
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
+pub struct Level(pub f32);
+
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Star {
     pub pos1: Point2<f32>,

@@ -1,26 +1,28 @@
 use ggez::{
     event::EventHandler,
-    graphics::{self, DrawParam, MeshBuilder, Rect},
+    graphics::{self, DrawParam, MeshBuilder, Rect, Color},
     Context, GameResult,
 };
 use legion::*;
 use rand::prelude::*;
 
-use crate::component::{Colour, Star};
+use crate::component::{Colour, Star, Level};
 
 pub struct Game {
     world: World,
 }
 
-fn generate_stars(num: usize, screen_coordinates: Rect) -> Vec<(Star, Colour)> {
+fn generate_stars(num: usize, screen_coordinates: Rect) -> Vec<(Star, Level, Colour)> {
     let mut stars = Vec::with_capacity(num);
 
     let mut rng = rand::thread_rng();
     for _ in 0..num {
         let x: f32 = rng.gen_range(screen_coordinates.left(), screen_coordinates.right());
         let y: f32 = rng.gen_range(screen_coordinates.top(), screen_coordinates.bottom());
+        let grey: f32 = rng.gen_range(0.3, 0.95);
+        let level: f32 = rng.gen_range(0.0, 1.0);
 
-        stars.push((Star::new(x, y), graphics::WHITE));
+        stars.push((Star::new(x, y), Level(level), Color::new(grey, grey, grey, 1.0)));
     }
 
     return stars;
