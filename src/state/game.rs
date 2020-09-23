@@ -1,39 +1,44 @@
 use ggez::{
     event::EventHandler,
-    graphics::{self, DrawParam, MeshBuilder},
+    graphics::{self, DrawParam, MeshBuilder, Rect},
     Context, GameResult,
 };
 use legion::*;
+use rand::prelude::*;
 
-use crate::component::{Colour, Position, Star};
+use crate::component::{Colour, Star};
 
 pub struct Game {
     world: World,
 }
 
-fn generate_stars(num: usize) -> Vec<(Star, Colour, Position)> {
+fn generate_stars(num: usize, screen_coordinates: Rect) -> Vec<(Star, Colour)> {
     let mut stars = Vec::with_capacity(num);
 
+    let mut rng = rand::thread_rng();
     for _ in 0..num {
-        stars.push((Star::default(), graphics::WHITE, Position::new(10.0, 20.0)));
+        let x: f32 = rng.gen_range(screen_coordinates.left(), screen_coordinates.right());
+        let y: f32 = rng.gen_range(screen_coordinates.top(), screen_coordinates.bottom());
+
+        stars.push((Star::new(x, y), graphics::WHITE));
     }
 
     return stars;
 }
 
 impl Game {
-    pub fn new(_ctx: &mut Context) -> Self {
+    pub fn new(ctx: &mut Context) -> Self {
         let mut world = World::default();
 
-        world.extend(generate_stars(10));
+        world.extend(generate_stars(1024, graphics::screen_coordinates(ctx)));
 
         Game { world }
     }
 
     fn draw_starfield(&mut self, ctx: &mut Context) -> GameResult<()> {
         let mut star_lines = &mut MeshBuilder::new();
-        for (_, colour, position) in <(&Star, &Colour, &Position)>::query().iter(&mut self.world) {
-            star_lines = star_lines.line(&[*position, *position], 1.0, *colour)?;
+        for (star, colour) in <(&Star, &Colour)>::query().iter(&mut self.world) {
+            star_lines = star_lines.line(&[star.pos1, star.pos2], 1.0, *colour)?;
         }
         let mesh = star_lines.build(ctx)?;
 
