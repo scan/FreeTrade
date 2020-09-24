@@ -1,4 +1,7 @@
-use ggez::{graphics::Color, nalgebra::Point2};
+use ggez::{
+    graphics::{Color, Rect},
+    nalgebra::Point2,
+};
 
 pub type Position = Point2<f32>;
 pub type Velocity = Point2<f32>;
@@ -6,6 +9,9 @@ pub type Colour = Color;
 
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
 pub struct Level(pub f32);
+
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
+pub struct ScreenDimensions(pub Rect);
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Star {

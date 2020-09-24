@@ -2,6 +2,7 @@ use ggez::{event, ContextBuilder, GameResult};
 
 mod component;
 mod state;
+mod system;
 
 fn main() -> GameResult {
     env_logger::init();

@@ -1,15 +1,19 @@
 use ggez::{
     event::EventHandler,
-    graphics::{self, DrawParam, MeshBuilder, Rect, Color},
+    graphics::{self, Color, DrawParam, MeshBuilder, Rect},
     Context, GameResult,
 };
 use legion::*;
 use rand::prelude::*;
 
-use crate::component::{Colour, Star, Level};
+use crate::{
+    component::{Colour, Level, Star, ScreenDimensions},
+    system::move_stars_system,
+};
 
 pub struct Game {
     world: World,
+    schedule: Schedule,
 }
 
 fn generate_stars(num: usize, screen_coordinates: Rect) -> Vec<(Star, Level, Colour)> {
@@ -22,7 +26,11 @@ fn generate_stars(num: usize, screen_coordinates: Rect) -> Vec<(Star, Level, Col
         let grey: f32 = rng.gen_range(0.3, 0.95);
         let level: f32 = rng.gen_range(0.0, 1.0);
 
-        stars.push((Star::new(x, y), Level(level), Color::new(grey, grey, grey, 1.0)));
+        stars.push((
+            Star::new(x, y),
+            Level(level),
+            Color::new(grey, grey, grey, 1.0),
+        ));
     }
 
     return stars;
@@ -34,7 +42,9 @@ impl Game {
 
         world.extend(generate_stars(1024, graphics::screen_coordinates(ctx)));
 
-        Game { world }
+        let schedule = Schedule::builder().add_system(move_stars_system()).build();
+
+        Game { world, schedule }
     }
 
     fn draw_starfield(&mut self, ctx: &mut Context) -> GameResult<()> {
@@ -51,7 +61,14 @@ impl Game {
 }
 
 impl EventHandler for Game {
-    fn update(&mut self, _ctx: &mut Context) -> GameResult<()> {
+    fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
+        let screen_dimensions = ScreenDimensions(graphics::screen_coordinates(ctx));
+
+        let mut resources = Resources::default();
+        resources.insert(screen_dimensions);
+
+        self.schedule.execute(&mut self.world, &mut resources);
+
         Ok(())
     }
 
