@@ -7,7 +7,7 @@ use legion::*;
 use rand::prelude::*;
 
 use crate::{
-    component::{Colour, Level, Star, ScreenDimensions},
+    component::{Colour, Level, Player, ScreenDimensions, Star, Velocity},
     system::move_stars_system,
 };
 
@@ -41,6 +41,8 @@ impl Game {
         let mut world = World::default();
 
         world.extend(generate_stars(1024, graphics::screen_coordinates(ctx)));
+
+        world.push((Player, Velocity::new(1.0, 1.0)));
 
         let schedule = Schedule::builder().add_system(move_stars_system()).build();
 

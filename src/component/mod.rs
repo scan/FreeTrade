@@ -1,10 +1,10 @@
 use ggez::{
     graphics::{Color, Rect},
-    nalgebra::Point2,
+    nalgebra::{Point2, Vector2},
 };
 
 pub type Position = Point2<f32>;
-pub type Velocity = Point2<f32>;
+pub type Velocity = Vector2<f32>;
 pub type Colour = Color;
 
 #[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Default)]
